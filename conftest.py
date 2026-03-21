@@ -1,27 +1,22 @@
-import json
-
 import pytest
 from selenium import webdriver
 
-from utils import TestData
+from utils.ReadExcel import get_data, get_login_data
 
 
-# def pytest_addoption(parser):
-#     parser.addini("test_config", "Related test data")
+def pytest_addoption(parser):
+    parser.addini("base_url", "App URL")
+    parser.addini("excel_file", "Excel file path")
+    parser.addini("sheet_name", "Login sheet name")
+    parser.addini("app_username", "Login username")
+    parser.addini("app_password", "Login password")
 
 def pytest_metadata(metadata):
     metadata["Project"] = "Sauce Demo : Selenium Automation"
     metadata["Tester"] = "Vani Galag"
 
-# @pytest.fixture(scope="session")
-# def test_config(request):
-#     path = request.config.getini("test_config")
-#     with open(path) as f:
-#         data = json.load(f)
-#     return data
-
 @pytest.fixture()
-def driver_setup():
+def driver_setup(pytestconfig):
     opts = webdriver.ChromeOptions()
     prefs = {
         "credentials_enable_service": False,  # Disables the "Save password?" prompt
@@ -41,6 +36,21 @@ def driver_setup():
 
 
     driver = webdriver.Chrome(opts)
-    driver.get(TestData.app_url)
+    driver.maximize_window()
+    driver.get(pytestconfig.getini("base_url"))
     yield driver
-    driver.close()
+    driver.quit()
+
+'''
+Used in test_login
+'''
+def pytest_generate_tests(metafunc):
+    login_data  = get_login_data(metafunc.config.getini("excel_file"),
+                                       metafunc.config.getini("sheet_name"))
+    if "valid_user" in metafunc.fixturenames:
+        valid_data, _ = login_data
+        metafunc.parametrize("valid_user", valid_data)
+
+    if "invalid_user" in metafunc.fixturenames:
+        _, invalid_data = login_data
+        metafunc.parametrize("invalid_user", invalid_data)

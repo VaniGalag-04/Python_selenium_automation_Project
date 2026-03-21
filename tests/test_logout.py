@@ -1,11 +1,9 @@
-from pages.Locators import password_text
 from pages.LoginPage import LoginPage
-from utils import TestData
-
 
 class TestLogout:
-    def test_logout(self,driver_setup):
+    def test_logout(self,driver_setup,pytestconfig):
         login_page = LoginPage(driver_setup)
-        home = login_page.login(TestData.app_username, TestData.app_password)
+        home = login_page.login(pytestconfig.getini("app_username"),
+                                pytestconfig.getini("app_password"))
         home.logout()
-        assert login_page.is_login_page() is True
+        assert login_page.is_login_page()
