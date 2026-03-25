@@ -1,0 +1,7 @@
+{
+  "base_url" : "https://www.saucedemo.com",
+  "excel_file":"files/saucedemo_login.xlsx",
+  "sheet_name":"login",
+  "app_username":"standard_user",
+  "app_password": "secret_sauce"
+}

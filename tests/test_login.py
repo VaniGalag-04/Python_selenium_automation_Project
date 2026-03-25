@@ -6,7 +6,7 @@ class TestLogin:
         login_page = LoginPage(driver_setup)
         username,password = valid_user
         home = login_page.login(username,password)
-        assert home.isHomePage()
+        assert home.is_home_page()
 
     def test_invalid_login(self,driver_setup,invalid_user):
         login_page = LoginPage(driver_setup)
